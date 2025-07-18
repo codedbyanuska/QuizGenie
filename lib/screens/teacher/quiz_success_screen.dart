@@ -89,8 +89,8 @@ class _QuizSuccessScreenState extends State<QuizSuccessScreen> {
                                 if (quizSubmitted)
                                   Text(
                                     selectedAnswers[index] == q.correctAnswer
-                                        ? '✅ Correct'
-                                        : '❌ Wrong (Answer: ${q.correctAnswer})',
+                                        ? ' Correct'
+                                        : ' Wrong (Answer: ${q.correctAnswer})',
                                     style: TextStyle(
                                         color: selectedAnswers[index] ==
                                                 q.correctAnswer
