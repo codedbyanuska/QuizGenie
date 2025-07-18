@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'welcome_screen.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -10,26 +11,34 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-        super.initState();
-        navigateToWelcome();
+    super.initState();
+    navigateToWelcome();
   }
-  Future navigateToWelcome() async
-  {
-    Future.delayed(Duration(seconds: 3));
-    Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) => const WelcomeScreen()));
+
+  Future<void> navigateToWelcome() async {
+    await Future.delayed(const Duration(seconds: 3));
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+      );
+    }
   }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body:Center(
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('images/quizapp_logo.png'),
-            SizedBox(height: 15),
-            CircularProgressIndicator()
+            Image.asset('images/quizapp_logo.png', height: 120),
+            const SizedBox(height: 15),
+            const CircularProgressIndicator(),
           ],
         ),
-      )
+      ),
     );
   }
 }
