@@ -105,7 +105,10 @@ class _TutorScreenState extends State<TutorScreen> {
       if (context.mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const QuizSuccessScreen()),
+          MaterialPageRoute(
+              builder: (_) => QuizSuccessScreen(
+                    topic: topic,
+                  )),
         );
       }
     } catch (e) {
@@ -129,7 +132,8 @@ class _TutorScreenState extends State<TutorScreen> {
               children: [
                 Text(
                   'Q${index + 1}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const Spacer(),
                 IconButton(
@@ -148,14 +152,16 @@ class _TutorScreenState extends State<TutorScreen> {
             const SizedBox(height: 8),
             for (int i = 0; i < 4; i++)
               TextField(
-                decoration: InputDecoration(labelText: 'Option ${String.fromCharCode(65 + i)}'),
+                decoration: InputDecoration(
+                    labelText: 'Option ${String.fromCharCode(65 + i)}'),
                 controller: TextEditingController(text: q.options[i]),
                 onChanged: (val) => q.options[i] = val,
               ),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               value: q.correctAnswer.isEmpty ? null : q.correctAnswer,
-              decoration: const InputDecoration(labelText: 'Correct Answer (A/B/C/D)'),
+              decoration:
+                  const InputDecoration(labelText: 'Correct Answer (A/B/C/D)'),
               items: ['A', 'B', 'C', 'D'].map((opt) {
                 return DropdownMenuItem(
                   value: opt,
@@ -204,24 +210,26 @@ class _TutorScreenState extends State<TutorScreen> {
                     ),
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _addEmptyQuestion,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Add Question'),
+            SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _addEmptyQuestion,
+                      icon: const Icon(Icons.add),
+                      label: const Text('Add Question'),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _saveQuiz,
-                    icon: const Icon(Icons.save),
-                    label: const Text('Save Quiz'),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _saveQuiz,
+                      icon: const Icon(Icons.save),
+                      label: const Text('Save Quiz'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             )
           ],
         ),

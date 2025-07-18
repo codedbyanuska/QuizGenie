@@ -4,6 +4,32 @@ import '../models/question_model.dart';
 
 class FirestoreService {
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static Future<List<QuestionModel>> fetchQuestion(String topic) async {
+    final snapshot = await _db
+        .collection('quiz')
+        .where('quizTitle', isEqualTo: topic)
+        .orderBy('createdAt', descending: true)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      print('❌ No quiz found for topic: $topic');
+      return [];
+    }
+
+    final quizDocId = snapshot.docs.first.id;
+    print('✅ Found quiz with ID: $quizDocId');
+
+    // 🔽 Now fetch questions from this quiz
+    final questionsSnapshot = await _db
+        .collection('quiz')
+        .doc(quizDocId)
+        .collection('questions')
+        .get();
+
+    return questionsSnapshot.docs
+        .map((doc) => QuestionModel.fromMap(doc.data()))
+        .toList();
+  }
 
   static Future<void> saveQuiz({
     required String topic,
@@ -11,9 +37,14 @@ class FirestoreService {
     required List<QuestionModel> questions,
   }) async {
     try {
-      // ✅ Create a new quiz document inside 'quiz'
-      final docRef = await _db.collection('quiz').add({
-        'topic': topic,
+      // ✅ Generate a custom quiz ID (e.g., topic + timestamp)
+      final quizDocId = '${topic}_${DateTime.now().millisecondsSinceEpoch}';
+
+      final docRef = _db.collection('quiz').doc(quizDocId);
+
+      await docRef.set({
+        'quizId': quizDocId,
+        'quizTitle': topic, // explicitly storing topic as quizTitle
         'createdBy': createdBy,
         'createdAt': FieldValue.serverTimestamp(),
       });
@@ -36,9 +67,11 @@ class FirestoreService {
         });
       }
 
-      developer.log("Quiz saved with ID: ${docRef.id}", name: 'FirestoreService');
+      developer.log("Quiz saved with custom ID: $quizDocId",
+          name: 'FirestoreService');
     } catch (e, stackTrace) {
-      developer.log('Error saving quiz', name: 'FirestoreService', error: e, stackTrace: stackTrace);
+      developer.log('Error saving quiz',
+          name: 'FirestoreService', error: e, stackTrace: stackTrace);
     }
   }
 }
