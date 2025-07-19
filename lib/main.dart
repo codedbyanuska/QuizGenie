@@ -1,11 +1,20 @@
+
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; // Added
+import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'screens/splash_screen.dart';
+import 'theme/app_theme.dart';
+import 'theme/theme_provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Required for async before runApp
-  await Firebase.initializeApp(); // Initialize Firebase
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,9 +22,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      title: 'QuizGenie',
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeProvider.themeMode,
+      home: const SplashScreen(),
     );
   }
 }
