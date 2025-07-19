@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:quizgenie/models/quiz_success_screen.dart';
 import 'package:quizgenie/services/firestore_service.dart';
-import 'package:quizgenie/screens/teacher/quiz_success_screen.dart';
 
 class AllQuizzesScreen extends StatelessWidget {
   const AllQuizzesScreen({super.key});
