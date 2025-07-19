@@ -4,14 +4,14 @@ import 'package:quizgenie/services/firestore_service.dart';
 import 'package:quizgenie/models/question_model.dart';
 import 'quiz_success_screen.dart';
 
-class TutorScreen extends StatefulWidget {
-  const TutorScreen({super.key});
+class TutorHomeScreen extends StatefulWidget {
+  const TutorHomeScreen({super.key});
 
   @override
-  State<TutorScreen> createState() => _TutorScreenState();
+  State<TutorHomeScreen> createState() => _TutorHomeScreenState();
 }
 
-class _TutorScreenState extends State<TutorScreen> {
+class _TutorHomeScreenState extends State<TutorHomeScreen> {
   final TextEditingController _topicController = TextEditingController();
   bool isLoading = false;
   List<QuestionModel> quizQuestions = [];
