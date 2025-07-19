@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'teacher/home_screen.dart'; // Make sure this file exists in the same or correct folder
+import 'home_screen.dart'; // Make sure this file exists in the same or correct folder
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});

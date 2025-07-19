@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quizgenie/screens/student/student_home_screen.dart';
-import 'package:quizgenie/screens/teacher/tutor_home_screen.dart';
+import 'package:quizgenie/screens/teacher/tutor_dashboard_screen.dart'; // Add this import
 import 'package:quizgenie/services/firestore_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const TutorHomeScreen()),
+                          builder: (context) => const TutorDashboard()),
                     );
                   } else {
                     // Show error message
