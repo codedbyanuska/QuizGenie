@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'tutor_screen.dart'; // Existing screen
-import 'package:quizgenie/screens/all_quizzes_screen.dart'; // 👈 Create this new screen
+import 'package:quizgenie/screens/login_screen.dart';
+import 'package:quizgenie/screens/signup_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -15,27 +15,24 @@ class HomeScreen extends StatelessWidget {
           children: [
             const Text("This is the Home Screen!"),
             const SizedBox(height: 20),
-            
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const TutorScreen()),
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
                 );
               },
-              child: const Text("Go to Tutor Screen"),
+              child: const Text("Login User"),
             ),
-
             const SizedBox(height: 20),
-
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AllQuizzesScreen()),
+                  MaterialPageRoute(builder: (context) => const SignUpScreen()),
                 );
               },
-              child: const Text("View All Quizzes"),
+              child: const Text("Sign Up User"),
             ),
           ],
         ),
