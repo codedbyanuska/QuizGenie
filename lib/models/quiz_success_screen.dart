@@ -23,27 +23,63 @@ class _QuizSuccessScreenState extends State<QuizSuccessScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.topic} Quiz')),
-      body: FutureBuilder<List<QuestionModel>>(
-        future: _quizQuestions,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            final questions = snapshot.data!;
-            if (selectedAnswers.length != questions.length) {
-              selectedAnswers = List<String?>.filled(questions.length, null);
-            }
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          color: const Color(0xFFE3F2FD),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 10),
+              Text(
+                "${widget.topic} Quiz",
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E293B),
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "Answer the questions below carefully.",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF475569),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: FutureBuilder<List<QuestionModel>>(
+                  future: _quizQuestions,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(
+                          child: Text("Error: ${snapshot.error}",
+                              style: const TextStyle(color: Colors.red)));
+                    } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      final questions = snapshot.data!;
+                      if (selectedAnswers.length != questions.length) {
+                        selectedAnswers =
+                            List<String?>.filled(questions.length, null);
+                      }
 
-            return QuizDisplay(
-                questions: questions, selectedAnswers: selectedAnswers);
-          } else {
-            return Center(child: Text("No data available"));
-          }
-        },
+                      return QuizDisplay(
+                        questions: questions,
+                        selectedAnswers: selectedAnswers,
+                      );
+                    } else {
+                      return const Center(child: Text("No questions found."));
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

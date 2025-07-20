@@ -10,124 +10,106 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _roleController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  String _selectedRole = 'Student';
+  final List<String> _roles = ['Student', 'Tutor'];
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: isDark
-                ? [const Color(0xFF0F2027), const Color(0xFF203A43)]
-                : [const Color(0xFFE3F2FD), const Color(0xFFBBDEFB)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Create Account",
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Card(
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(28),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "Create Account",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF111827),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
-                  // Email
-                  _buildInputField(
-                    controller: _emailController,
-                    hint: "Enter Email",
-                    icon: Icons.email,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Password
-                  _buildInputField(
-                    controller: _passwordController,
-                    hint: "Enter Password",
-                    icon: Icons.lock,
-                    obscure: true,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Role
-                  _buildInputField(
-                    controller: _roleController,
-                    hint: "Enter Role (Tutor/Student)",
-                    icon: Icons.person_outline,
-                  ),
-                  const SizedBox(height: 30),
-
-                  // Sign Up Button
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          isDark ? const Color(0xFF64FFDA) : Colors.indigo,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 32, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      elevation: 6,
+                    _buildInputField(
+                      controller: _emailController,
+                      hint: "Enter Email",
+                      icon: Icons.email,
                     ),
-                    onPressed: () async {
-                      final email = _emailController.text.trim();
-                      final password = _passwordController.text.trim();
-                      final role = _roleController.text.trim().toLowerCase();
+                    const SizedBox(height: 20),
 
-                      final message = await FirestoreService.registerWithEmail(
-                          email, password, role);
+                    _buildInputField(
+                      controller: _passwordController,
+                      hint: "Enter Password",
+                      icon: Icons.lock,
+                      obscure: true,
+                    ),
+                    const SizedBox(height: 20),
 
-                      if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              message ?? "Signed up successfully!"),
-                          backgroundColor:
-                              message == null ? Colors.green : Colors.red,
+                    _buildDropdownField(),
+                    const SizedBox(height: 30),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: _handleSignUp,
+                        icon: const Icon(Icons.arrow_forward),
+                        label: const Text("Sign Up"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      );
-
-                      if (message == null) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.arrow_forward, color: Colors.white),
-                    label: const Text(
-                      "Sign Up",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 16),
 
-                  const SizedBox(height: 20),
-
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()),
-                      );
-                    },
-                    child: const Text("Already have an account? Login"),
-                  ),
-                ],
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          );
+                        },
+                        child: const Text("Already have an account? Login"),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: theme.primaryColor,
+                          side: BorderSide(color: theme.primaryColor),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -142,31 +124,87 @@ class _SignUpScreenState extends State<SignUpScreen> {
     required IconData icon,
     bool obscure = false,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.white10 : Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(30),
-        boxShadow: isDark
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.15),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.15),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: TextField(
         controller: controller,
         obscureText: obscure,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: isDark ? Colors.tealAccent : null),
+          prefixIcon: Icon(icon, color: Theme.of(context).primaryColor),
           hintText: hint,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
         ),
       ),
     );
+  }
+
+  Widget _buildDropdownField() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.15),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<String>(
+        value: _selectedRole,
+        items: _roles
+            .map((role) => DropdownMenuItem(
+                  value: role,
+                  child: Text(role),
+                ))
+            .toList(),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          prefixIcon: Icon(Icons.person_outline, color: Theme.of(context).primaryColor),
+        ),
+        onChanged: (value) {
+          setState(() {
+            _selectedRole = value!;
+          });
+        },
+      ),
+    );
+  }
+
+  Future<void> _handleSignUp() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final role = _selectedRole.toLowerCase();
+
+    final message =
+        await FirestoreService.registerWithEmail(email, password, role);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message ?? "Signed up successfully!"),
+        backgroundColor: message == null ? Colors.green : Colors.red,
+      ),
+    );
+
+    if (message == null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
   }
 }
