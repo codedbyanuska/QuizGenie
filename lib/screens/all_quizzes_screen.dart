@@ -8,8 +8,16 @@ class AllQuizzesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('All Quizzes')),
+      appBar: AppBar(
+        title: const Text('Available Quizzes'),
+        centerTitle: true,
+        backgroundColor: theme.primaryColor,
+        foregroundColor: Colors.white,
+        elevation: 4,
+      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: FirestoreService.fetchAllQuizzes(),
         builder: (context, snapshot) {
@@ -23,39 +31,100 @@ class AllQuizzesScreen extends StatelessWidget {
 
           final quizzes = snapshot.data!;
 
-          return ListView.builder(
+          return ListView.separated(
+            padding: const EdgeInsets.all(16),
             itemCount: quizzes.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 16),
             itemBuilder: (context, index) {
               final quiz = quizzes[index];
-              final quizTitle = quiz['quizTitle'] ?? 'Untitled';
+              final quizTitle = quiz['quizTitle'] ?? 'Untitled Quiz';
               final createdBy = quiz['createdBy'] ?? 'Unknown';
               final timestamp = quiz['createdAt'] as Timestamp?;
               final formattedDate = timestamp != null
                   ? DateTime.fromMillisecondsSinceEpoch(
-                      timestamp.millisecondsSinceEpoch)
+                          timestamp.millisecondsSinceEpoch)
                       .toLocal()
                       .toString()
                       .split('.')[0]
                   : 'Unknown Date';
 
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                elevation: 3,
-                child: ListTile(
-                  title: Text(quizTitle,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('By: $createdBy\nDate: $formattedDate'),
-                  isThreeLine: true,
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => QuizSuccessScreen(topic: quizTitle),
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    colors: [theme.primaryColor.withOpacity(0.1), theme.primaryColor.withOpacity(0.2)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        quizTitle,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
                         ),
-                      );
-                    },
-                    child: const Text('Take Quiz'),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "By $createdBy",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          Text(
+                            formattedDate,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => QuizSuccessScreen(topic: quizTitle),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.play_arrow_rounded),
+                          label: const Text("Take Quiz"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.primaryColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            textStyle: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
               );
